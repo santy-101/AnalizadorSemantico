@@ -86,7 +86,7 @@ public class ParseException extends Exception {
   private static String initialise(Token currentToken,
                            int[][] expectedTokenSequences,
                            String[] tokenImage) {
-    String eol = System.getProperty("line.separator", "\n");
+    String eol = System.getProperty("linea.separator", "\n");
     StringBuffer expected = new StringBuffer();
     int maxSize = 0;
     for (int i = 0; i < expectedTokenSequences.length; i++) {
@@ -101,7 +101,7 @@ public class ParseException extends Exception {
       }
       expected.append(eol).append("    ");
     }
-    String retval = "Encountered \"";
+    String retval = "Error Sintáctico: Encontrado \"";
     Token tok = currentToken.next;
     for (int i = 0; i < maxSize; i++) {
       if (i != 0) retval += " ";
@@ -115,12 +115,12 @@ public class ParseException extends Exception {
       retval += " \"";
       tok = tok.next;
     }
-    retval += "\" at line " + currentToken.next.beginLine + ", column " + currentToken.next.beginColumn;
+    retval += "\" en la linea " + currentToken.next.beginLine + ", columna " + currentToken.next.beginColumn;
     retval += "." + eol;
     if (expectedTokenSequences.length == 1) {
-      retval += "Was expecting:" + eol + "    ";
+      retval += "Se esperaba:" + eol + "    ";
     } else {
-      retval += "Was expecting one of:" + eol + "    ";
+      retval += "Se espera uno :" + eol + "    ";
     }
     retval += expected.toString();
     return retval;
@@ -129,7 +129,7 @@ public class ParseException extends Exception {
   /**
    * The end of line string for this machine.
    */
-  protected String eol = System.getProperty("line.separator", "\n");
+  protected String eol = System.getProperty("linea.separador", "\n");
 
   /**
    * Used to convert raw characters to their escaped version

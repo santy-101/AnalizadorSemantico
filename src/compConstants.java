@@ -9,123 +9,107 @@ public interface compConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int ASIGNACION = 1;
+  int IGUAL = 1;
   /** RegularExpression Id. */
-  int PLUS = 2;
+  int MAS = 2;
   /** RegularExpression Id. */
-  int MINUS = 3;
+  int MENOS = 3;
   /** RegularExpression Id. */
-  int MULTIPLY = 4;
+  int POR = 4;
   /** RegularExpression Id. */
   int DIVIDE = 5;
   /** RegularExpression Id. */
-  int INCR = 6;
+  int PUBLIC = 6;
   /** RegularExpression Id. */
-  int DECR = 7;
+  int PRIVATE = 7;
   /** RegularExpression Id. */
-  int PUBLIC = 8;
+  int STATIC = 8;
   /** RegularExpression Id. */
-  int PRIVATE = 9;
+  int VOID = 9;
   /** RegularExpression Id. */
-  int STATIC = 10;
+  int MAIN = 10;
   /** RegularExpression Id. */
-  int VOID = 11;
+  int PROGRAMA = 11;
   /** RegularExpression Id. */
-  int MAIN = 12;
+  int IF = 12;
   /** RegularExpression Id. */
-  int PROGRAMA = 13;
+  int THEN = 13;
   /** RegularExpression Id. */
-  int IF = 14;
+  int ELSE = 14;
   /** RegularExpression Id. */
-  int ELSE = 15;
+  int DO = 15;
   /** RegularExpression Id. */
-  int ELSEIF = 16;
+  int WHILE = 16;
   /** RegularExpression Id. */
-  int FOR = 17;
+  int WRITE = 17;
   /** RegularExpression Id. */
-  int SWITCH = 18;
+  int READ = 18;
   /** RegularExpression Id. */
-  int CASE = 19;
+  int RETURN = 19;
   /** RegularExpression Id. */
-  int BREAK = 20;
+  int PARIZQ = 20;
   /** RegularExpression Id. */
-  int DEFAUL = 21;
+  int PARDER = 21;
   /** RegularExpression Id. */
-  int DO = 22;
+  int LLAVEIZQ = 22;
   /** RegularExpression Id. */
-  int WHILE = 23;
+  int LLAVEDER = 23;
   /** RegularExpression Id. */
-  int WRITE = 24;
+  int CORIZQ = 24;
   /** RegularExpression Id. */
-  int READ = 25;
+  int CORDER = 25;
   /** RegularExpression Id. */
-  int RETURN = 26;
+  int PUNTOYCOMA = 26;
   /** RegularExpression Id. */
-  int LPAREN = 27;
+  int COMA = 27;
   /** RegularExpression Id. */
-  int RPAREN = 28;
+  int COMILLAS = 28;
   /** RegularExpression Id. */
-  int LBRACE = 29;
+  int EXCLAMACION = 29;
   /** RegularExpression Id. */
-  int RBRACE = 30;
+  int AMP = 30;
   /** RegularExpression Id. */
-  int LBRACKET = 31;
+  int DINERO = 31;
   /** RegularExpression Id. */
-  int RBRACKET = 32;
+  int IGUALIGUAL = 32;
   /** RegularExpression Id. */
-  int SEMICOLON = 33;
+  int MENORIGUAL = 33;
   /** RegularExpression Id. */
-  int COMMA = 34;
+  int MENOR = 34;
   /** RegularExpression Id. */
-  int DOT = 35;
+  int MAYORIGUAL = 35;
   /** RegularExpression Id. */
-  int DOUBLECOMMA = 36;
+  int MAYOR = 36;
   /** RegularExpression Id. */
-  int EXCLAMACION = 37;
+  int DIFERENTE = 37;
   /** RegularExpression Id. */
-  int AMP = 38;
+  int OR = 38;
   /** RegularExpression Id. */
-  int DINERO = 39;
+  int AND = 39;
   /** RegularExpression Id. */
-  int EQ = 40;
+  int INT = 40;
   /** RegularExpression Id. */
-  int LE = 41;
+  int FLOAT = 41;
   /** RegularExpression Id. */
-  int MN = 42;
+  int CHAR = 42;
   /** RegularExpression Id. */
-  int GE = 43;
+  int STRING = 43;
   /** RegularExpression Id. */
-  int GR = 44;
+  int BOOL = 44;
   /** RegularExpression Id. */
-  int NE = 45;
+  int NUMERO = 45;
   /** RegularExpression Id. */
-  int OR = 46;
+  int IDENTIFICADOR = 46;
   /** RegularExpression Id. */
-  int AND = 47;
+  int DECIMAL = 47;
   /** RegularExpression Id. */
-  int INT = 48;
+  int CADENA = 48;
   /** RegularExpression Id. */
-  int DEC = 49;
+  int CARACTER = 49;
   /** RegularExpression Id. */
-  int CHR = 50;
+  int DOSPUNTOS = 50;
   /** RegularExpression Id. */
-  int STR = 51;
-  /** RegularExpression Id. */
-  int BOOL = 52;
-  /** RegularExpression Id. */
-  int NUMBER = 53;
-  /** RegularExpression Id. */
-  int IDENTIFIER = 54;
-  /** RegularExpression Id. */
-  int DECIMAL = 55;
-  /** RegularExpression Id. */
-  int CADENA = 56;
-  /** RegularExpression Id. */
-  int CARAC = 57;
-  /** RegularExpression Id. */
-  int DOUBLEPOINT = 58;
-  /** RegularExpression Id. */
-  int BOOLEANO = 59;
+  int BOOLEANO = 51;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -138,8 +122,6 @@ public interface compConstants {
     "\"-\"",
     "\"*\"",
     "\"/\"",
-    "\"++\"",
-    "\"--\"",
     "\"public\"",
     "\"private\"",
     "\"static\"",
@@ -147,13 +129,8 @@ public interface compConstants {
     "\"public static void Main()\"",
     "\"Programa\"",
     "\"if\"",
+    "\"then\"",
     "\"else\"",
-    "\"ien otro\"",
-    "\"irepetir\"",
-    "\"ialternativa\"",
-    "\"iopcion\"",
-    "\"itermina\"",
-    "\"ipredef\"",
     "\"do\"",
     "\"while\"",
     "\"output\"",
@@ -167,7 +144,6 @@ public interface compConstants {
     "\"]\"",
     "\";\"",
     "\",\"",
-    "\".\"",
     "\"\\\"\"",
     "\"!\"",
     "\"&\"",
@@ -185,11 +161,11 @@ public interface compConstants {
     "\"char\"",
     "\"string\"",
     "\"bool\"",
-    "<NUMBER>",
-    "<IDENTIFIER>",
+    "<NUMERO>",
+    "<IDENTIFICADOR>",
     "<DECIMAL>",
     "<CADENA>",
-    "<CARAC>",
+    "<CARACTER>",
     "\":\"",
     "<BOOLEANO>",
     "\" \"",
@@ -197,6 +173,8 @@ public interface compConstants {
     "\"\\r\"",
     "\"\\r\\n\"",
     "\"\\t\"",
+    "<token of kind 57>",
+    "<token of kind 58>",
   };
 
 }

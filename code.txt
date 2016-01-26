@@ -1,11 +1,12 @@
 Programa test
 {
-
+//Declaracion de variables globales
+int : j;
+int : k;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 	public static void Main() 
-	{			
-	int santy;
-	santy=3+6;
-
+	{}
 	
-	}
+	
+	
+	
 }

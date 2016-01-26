@@ -2,7 +2,6 @@ import java.io.PrintStream;
 import java.util.Hashtable;
 import java.lang.String;
 import java.util.ArrayList;
-
 class TokenAsignaciones
 {
 	  //Variable para validar asignaciones a caracteres(ichr)
@@ -16,7 +15,7 @@ class TokenAsignaciones
 	  private static ArrayList<Integer> strComp = new ArrayList();
 	  private static ArrayList<Integer> chrComp = new ArrayList();
 	  
-												//variable		//tipoDato
+									         //variable		//tipoDato
 	public static void InsertarSimbolo(Token identificador, int tipo)
 	{
 		//En este metodo se agrega a la tabla de tokens el identificador que esta siendo declarado junto con su tipo de dato
@@ -31,19 +30,19 @@ class TokenAsignaciones
 		 cadena = strComp
 		 caracter = chrComp
 		*/
-		intComp.add(48);
-		intComp.add(53);
+		intComp.add(40);
+		intComp.add(45);
 		
-		decComp.add(48);
-		decComp.add(49);
-		decComp.add(53);
-		decComp.add(55);
+		decComp.add(40);
+		decComp.add(41);
+		decComp.add(45);
+		decComp.add(47);
 		
-		chrComp.add(50);
-		chrComp.add(57);
+		chrComp.add(42);
+		chrComp.add(49);
 		
-		strComp.add(51);
-		strComp.add(56);
+		strComp.add(43);
+		strComp.add(48);
 	}
  
 	public static String checkAsing(Token TokenIzq, Token TokenAsig)
@@ -55,7 +54,7 @@ class TokenAsignaciones
 								asi como, si el token enviado es diferente a algun tipo que no se declara como los numeros(48), los decimales(50),
 								caracteres(52) y cadenas(51)
 								entonces tipoIdent1 = tipo_de_dato, ya que TokenAsig es un dato*/
-		if(TokenIzq.kind != 53 && TokenIzq.kind != 55)		
+		if(TokenIzq.kind != 47 && TokenIzq.kind != 47)		
 		{
 			try 
 			{
@@ -65,14 +64,14 @@ class TokenAsignaciones
 			catch(Exception e)
 			{
 				//Si TokenIzq.image no se encuentra en la tabla en la cual se agregan los tokens, el token no ha sido declarado, y se manda un error
-				return "Error: El identificador " + TokenIzq.image + " No ha sido declarado \r\nLinea: " + TokenIzq.beginLine;
+				return "Error Semántico : El identificador " + TokenIzq.image + " No ha sido declarado \r\nLinea: " + TokenIzq.beginLine;
 			}
 		}
 		else 		
 			tipoIdent1 = 0;
 			
 		//TokenAsig.kind != 48 && TokenAsig.kind != 50 && TokenAsig.kind != 51 && TokenAsig.kind != 52
-		if(TokenAsig.kind == 54)	
+		if(TokenAsig.kind == 46)	
 		{
 			/*Si el tipo de dato que se esta asignando, es algun identificador(kind == 49) 
 			se obtiene su tipo de la tabla de tokens para poder hacer las comparaciones*/
@@ -83,12 +82,12 @@ class TokenAsignaciones
 			catch(Exception e)
 			{
 				//si el identificador no existe manda el error
-				return "Error: El identificador " + TokenAsig.image + " No ha sido declarado \r\nLinea: " + TokenIzq.beginLine;
+				return "Error Semántico : El identificador " + TokenAsig.image + " No ha sido declarado \r\nLinea: " + TokenIzq.beginLine;
 			}
 		}
 				//Si el dato es entero(48) o decimal(50) o caracter(51) o cadena(52)
 				//tipoIdent2 = tipo_del_dato
-		else if(TokenAsig.kind == 53 || TokenAsig.kind == 55 || TokenAsig.kind == 56 || TokenAsig.kind == 57)
+		else if(TokenAsig.kind == 45 || TokenAsig.kind == 47 || TokenAsig.kind == 48 || TokenAsig.kind == 49)
 			tipoIdent2 = TokenAsig.kind;
 		else //Si no, se inicializa en algun valor "sin significado(con respecto a los tokens)", para que la variable este inicializada y no marque error al comparar
 			tipoIdent2 = 0; 
@@ -96,22 +95,22 @@ class TokenAsignaciones
 			
 	  
 		
-		if(tipoIdent1 == 48) //Int
+		if(tipoIdent1 == 40) //Int
 		{
 			//Si la lista de enteros(intComp) contiene el valor de tipoIdent2, entonces es compatible y se puede hacer la asignacion
 			if(intComp.contains(tipoIdent2))
 				return " ";
 			else //Si el tipo de dato no es compatible manda el error
-				return "Error: No se puede convertir " + TokenAsig.image + " a Entero \r\nLinea: " + TokenIzq.beginLine;
+				return "Error Semántico : No se puede convertir " + TokenAsig.image + " a Entero \r\nLinea: " + TokenIzq.beginLine;
 		}
-		else if(tipoIdent1 == 49) //double
+		else if(tipoIdent1 == 41) //double
 		{
 			if(decComp.contains(tipoIdent2))
 				return " ";
 			else
-				return "Error: No se puede convertir " + TokenAsig.image + " a Decimal \r\nLinea: " + TokenIzq.beginLine;
+				return "Error Semántico : No se puede convertir " + TokenAsig.image + " a Decimal \r\nLinea: " + TokenIzq.beginLine;
 		}
-		else if(tipoIdent1 == 50) //char
+		else if(tipoIdent1 == 42) //char
 		{
 			/*variable segunda: cuenta cuantos datos se van a asignar al caracter: 
 				si a el caracter se le asigna mas de un dato (ej: 'a' + 'b') marca error 
@@ -122,18 +121,18 @@ class TokenAsignaciones
 				if(chrComp.contains(tipoIdent2))
 					return " ";				
 				else
-					return "Error: No se puede convertir " + TokenAsig.image + " a Caracter \r\nLinea: " + TokenIzq.beginLine;	
+					return "Error Semántico : No se puede convertir " + TokenAsig.image + " a Caracter \r\nLinea: " + TokenIzq.beginLine;	
 			}
 			else //Si se esta asignando mas de un caracter manda el error 			
 				return "Error: No se puede asignar mas de un valor a un caracter \r\nLinea: " + TokenIzq.beginLine;
 			
 		}
-		else if(tipoIdent1 == 51) //string
+		else if(tipoIdent1 == 43) //string
 		{
 			if(strComp.contains(tipoIdent2))
 				return " ";
 			else
-				return "Error: No se puede convertir " + TokenAsig.image + " a Cadena \r\nLinea: " + TokenIzq.beginLine;
+				return "Error Semántico : No se puede convertir " + TokenAsig.image + " a Cadena \r\nLinea: " + TokenIzq.beginLine;
 		}
 		else
 		{
