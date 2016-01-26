@@ -1,0 +1,11 @@
+Programa test
+{
+
+	public static void Main() 
+	{			
+	int santy;
+	santy=3+6;
+
+	
+	}
+}
