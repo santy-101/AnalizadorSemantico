@@ -66,7 +66,7 @@ class comp implements compConstants {
         jj_la1[1] = jj_gen;
         break label_2;
       }
-      FuncionesI();
+      ImplementacionFunciones();
     }
   }
 
@@ -200,10 +200,10 @@ class comp implements compConstants {
     }
   }
 
-// implementacion de las funciones
-  static final public void FuncionesI() throws ParseException {
+// Implementacion de las funciones
+  static final public void ImplementacionFunciones() throws ParseException {
     cabecera();
-    cuerpoF();
+    cuerpoFuncion();
   }
 
   static final public void cabecera() throws ParseException {
@@ -215,7 +215,7 @@ class comp implements compConstants {
     jj_consume_token(PARDER);
   }
 
-  static final public void cuerpoF() throws ParseException {
+  static final public void cuerpoFuncion() throws ParseException {
     jj_consume_token(LLAVEIZQ);
     Sentencias();
     jj_consume_token(LLAVEDER);

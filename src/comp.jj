@@ -115,7 +115,7 @@ void Cuerpo():
   TokenAsignaciones.SetTables();	
   }
 {
-(VariablesGlobales())* Principal() (FuncionesI())* 
+(VariablesGlobales())* Principal() (ImplementacionFunciones())* 
 } 
 
 void VariablesGlobales():
@@ -182,18 +182,18 @@ void TiposDatos():
 	|<BOOL>
 }
 
-// implementacion de las funciones
-void FuncionesI():
+// Implementacion de las funciones
+void ImplementacionFunciones():
 {}
 {
-  cabecera() cuerpoF()}
+  cabecera() cuerpoFuncion()}
 
 void cabecera():
 {}
 {
   TiposDatos()  < DOSPUNTOS > < IDENTIFICADOR > < PARIZQ > parametros() < PARDER >  }
 
-void cuerpoF():
+void cuerpoFuncion():
 {}
 {
   < LLAVEIZQ > Sentencias()  < LLAVEDER > }
