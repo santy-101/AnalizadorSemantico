@@ -13,13 +13,16 @@ class comp
 		
      		comp analizador = new comp(entrada) ;
 			analizador.Programa();
-			System.out.println("\tAnalizador ha terminado.");			
+			System.out.println("\tAnalizador ha terminado.");
+				
 		}
 		catch(ParseException e)
 		{
 			System.out.println(e.getMessage());
 			System.out.println("\tAnalizador ha terminado.");
 		}
+
+		TokenAsignaciones.visualizarTablas();
 	}
 }
 PARSER_END(comp)
@@ -97,7 +100,7 @@ TOKEN:
 SKIP : 
 { 
 	" "|"\n" | "\r" | "\r\n" | "\t"
-	//ignrar comentarios
+	//ignora comentarios
 	|  <"//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")>
   	|  <"/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
 }
@@ -108,52 +111,66 @@ void Programa() :
 	<PROGRAMA><IDENTIFICADOR><LLAVEIZQ>Cuerpo()<LLAVEDER><EOF>	
 }
 void Cuerpo():
-{}
 {
-	VariablesGlobales()
+  TokenAsignaciones.SetTables();	
+  }
+{
+(VariablesGlobales())* Principal() (FuncionesI())* 
 } 
 
 void VariablesGlobales():
 {}
 {
-  	LOOKAHEAD(4) vector()|declare()	 
-	 
+ var()( vector()|declare()|funcion() )	  
 }
 
 void vector():
 {}
 {
-LOOKAHEAD(2) <INT><IDENTIFICADOR> <CORIZQ> <NUMERO> <CORDER> <PUNTOYCOMA>
-| declare() 
+<CORIZQ> <NUMERO> <CORDER> <PUNTOYCOMA>
 }
 
 void declare():
 {}
 {
-  TiposDatos() <DOSPUNTOS><IDENTIFICADOR>(<COMA><IDENTIFICADOR>)* <PUNTOYCOMA>
-
+(<COMA><IDENTIFICADOR>)* <PUNTOYCOMA>
 }
 
-//Funciones
+//declaracion de las Funciones
 void funcion():
 {}
 {
-  TiposDatos()<DOSPUNTOS><IDENTIFICADOR><PARIZQ><PARDER><LLAVEIZQ><LLAVEDER>  
-  	
+ <PARIZQ>parametros() <PARDER>< PUNTOYCOMA >   	
 }
 void var():
-{}
 {
-  TiposDatos() <DOSPUNTOS> <IDENTIFICADOR> 
+  int td;
+  Token var;	
 }
+{    (TiposDatos())
+	{
+	  td = token.kind;
+	}
+	<DOSPUNTOS> var = <IDENTIFICADOR> 
+	{		
+		TokenAsignaciones.InsertarSimbolo(var, td);
+	}  
+}
+
+void parametros():
+{}
+{ (var()| < COMA > var())*}
+
+//definicin de main
 void Principal():
 {
-	TokenAsignaciones.SetTables();	
+	
 }
 {
 	<MAIN>
 	<LLAVEIZQ> Sentencias() <LLAVEDER> 	
 }
+
 
 void TiposDatos():
 {}
@@ -162,7 +179,24 @@ void TiposDatos():
 	|<FLOAT>
 	|<STRING>
 	|<CHAR>
+	|<BOOL>
 }
+
+// implementacion de las funciones
+void FuncionesI():
+{}
+{
+  cabecera() cuerpoF()}
+
+void cabecera():
+{}
+{
+  TiposDatos()  < DOSPUNTOS > < IDENTIFICADOR > < PARIZQ > parametros() < PARDER >  }
+
+void cuerpoF():
+{}
+{
+  < LLAVEIZQ > Sentencias()  < LLAVEDER > }
 void VariablesLocales():
 {
 	int td;
@@ -171,12 +205,10 @@ void VariablesLocales():
 {
 (
 	(TiposDatos())
-	<DOSPUNTOS>
 	{
-		td = token.kind;
+	  td = token.kind;
 	}
-	
-	var = <IDENTIFICADOR> 
+	<DOSPUNTOS> var = <IDENTIFICADOR> 
 	{		
 		TokenAsignaciones.InsertarSimbolo(var, td);
 	} 
@@ -381,5 +413,3 @@ void SentenciaRead():
 {
 	<READ><PARIZQ><PARDER>
 }
-
-

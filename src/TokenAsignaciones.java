@@ -2,6 +2,7 @@ import java.io.PrintStream;
 import java.util.Hashtable;
 import java.lang.String;
 import java.util.ArrayList;
+import java.util.Enumeration;
 class TokenAsignaciones
 {
 	  //Variable para validar asignaciones a caracteres(ichr)
@@ -14,6 +15,9 @@ class TokenAsignaciones
 	  private static ArrayList<Integer> decComp = new ArrayList();
 	  private static ArrayList<Integer> strComp = new ArrayList();
 	  private static ArrayList<Integer> chrComp = new ArrayList();
+	  private static ArrayList<Integer> boolComp = new ArrayList();
+	  
+	
 	  
 									         //variable		//tipoDato
 	public static void InsertarSimbolo(Token identificador, int tipo)
@@ -29,20 +33,42 @@ class TokenAsignaciones
 		 decimal = decComp
 		 cadena = strComp
 		 caracter = chrComp
+		 boolean = boolComp
 		*/
-		intComp.add(40);
-		intComp.add(45);
 		
-		decComp.add(40);
-		decComp.add(41);
-		decComp.add(45);
-		decComp.add(47);
+		//Compatibles con int = int, float, bool
+		intComp.add(40); //int
+		intComp.add(41); //float
+		intComp.add(44); //bool
+		intComp.add(45); //int
+		intComp.add(47); //float
+		intComp.add(51); //bool
 		
-		chrComp.add(42);
-		chrComp.add(49);
+		//Compatibles con float = int, float, bool
 		
-		strComp.add(43);
-		strComp.add(48);
+		decComp.add(40); //int
+		decComp.add(41); //float
+		decComp.add(44); //bool
+		decComp.add(45); //int
+		decComp.add(47); //float
+		decComp.add(51); //bool
+		
+		//Compatibles con char = char
+		chrComp.add(42); //char
+		chrComp.add(49); //char
+		
+		
+		//Compatibles con string = string
+		strComp.add(43); //string
+		strComp.add(48); //string
+		
+		//Compatibles con bool = bool, int, float
+		boolComp.add(44); //bool
+		boolComp.add(40); //int
+		boolComp.add(41); //float
+		boolComp.add(51); //bool
+		boolComp.add(45); //int
+		boolComp.add(47); //float
 	}
  
 	public static String checkAsing(Token TokenIzq, Token TokenAsig)
@@ -54,7 +80,7 @@ class TokenAsignaciones
 								asi como, si el token enviado es diferente a algun tipo que no se declara como los numeros(48), los decimales(50),
 								caracteres(52) y cadenas(51)
 								entonces tipoIdent1 = tipo_de_dato, ya que TokenAsig es un dato*/
-		if(TokenIzq.kind != 47 && TokenIzq.kind != 47)		
+		if(TokenIzq.kind != 45 && TokenIzq.kind != 47)		
 		{
 			try 
 			{
@@ -85,16 +111,14 @@ class TokenAsignaciones
 				return "Error Semántico : El identificador " + TokenAsig.image + " No ha sido declarado \r\nLinea: " + TokenIzq.beginLine;
 			}
 		}
-				//Si el dato es entero(48) o decimal(50) o caracter(51) o cadena(52)
+				//Si el dato es entero(48) o decimal(50) o caracter(51) o cadena(52) o bool (51)
 				//tipoIdent2 = tipo_del_dato
-		else if(TokenAsig.kind == 45 || TokenAsig.kind == 47 || TokenAsig.kind == 48 || TokenAsig.kind == 49)
+		else if(TokenAsig.kind == 45 || TokenAsig.kind == 47 || TokenAsig.kind == 48 || TokenAsig.kind == 49 || TokenAsig.kind == 51)
 			tipoIdent2 = TokenAsig.kind;
 		else //Si no, se inicializa en algun valor "sin significado(con respecto a los tokens)", para que la variable este inicializada y no marque error al comparar
 			tipoIdent2 = 0; 
 
 			
-	  
-		
 		if(tipoIdent1 == 40) //Int
 		{
 			//Si la lista de enteros(intComp) contiene el valor de tipoIdent2, entonces es compatible y se puede hacer la asignacion
@@ -134,6 +158,13 @@ class TokenAsignaciones
 			else
 				return "Error Semántico : No se puede convertir " + TokenAsig.image + " a Cadena \r\nLinea: " + TokenIzq.beginLine;
 		}
+		else if(tipoIdent1 == 44) //bool
+		{
+			if(boolComp.contains(tipoIdent2))
+				return " ";
+			else
+				return "Error Semántico : No se puede convertir " + TokenAsig.image + " a Booleano \r\nLinea: " + TokenIzq.beginLine;
+		}
 		else
 		{
 			return "El Identificador " + TokenIzq.image + " no ha sido declarado" + " Linea: " + TokenIzq.beginLine;
@@ -156,6 +187,45 @@ class TokenAsignaciones
 			//Si no lo puede obtener, manda el error
 			return "Error: El identificador " + checkTok.image + " No ha sido declarado \r\nLinea: " + checkTok.beginLine;
 		}
+	}
+	
+	public static void visualizarTablas()
+	{
+		Enumeration e = tabla.keys();
+		Object obj;
+		System.out.printf("\n%10s%6s%5s%6s", "TABLA DE SIMBOLOS\n","NOMBRE"," |","TIPO\n");
+		
+		while(e.hasMoreElements())
+		{
+			obj=e.nextElement();
+			System.out.printf("%6s%5s%6s",obj," :",tipo(obj)+"\n");
+		}
+	}
+	
+	static String tipo(Object o )
+	{
+		String nombre="";
+		if(tabla.get(o).equals(40))
+		{
+			nombre="Int";
+		}
+		if(tabla.get(o).equals(41))
+		{
+			nombre="Float";
+		}
+		if(tabla.get(o).equals(42))
+		{
+			nombre="Char";
+		}
+		if(tabla.get(o).equals(43))
+		{
+			nombre="String";
+		}
+		if(tabla.get(o).equals(44))
+		{
+			nombre="Bool";
+		}
+		return nombre;
 	}
 
  }

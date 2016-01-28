@@ -2,11 +2,27 @@ Programa test
 {
 //Declaracion de variables globales
 int : j;
-int : k;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+int : k;    
+int : og[2];  
+char: suma();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 	public static void Main() 
-	{}
+	{
+	bool:x;
+	bool:x;
+	y=x;
+	k=suma;
+	int:j;
+	
+	}
+char : suma (int:x, float:y)
+{
+int: res;
+res = x+y;
+}
+	 
 	
 	
 	
 	
+		
 }
