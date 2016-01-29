@@ -23,6 +23,7 @@ class comp
 		}
 
 		TokenAsignaciones.visualizarTablas();
+		TokenAsignaciones.visualizarTablasFunciones();
 	}
 }
 PARSER_END(comp)
@@ -89,12 +90,12 @@ TOKEN:
 	| <STRING: "string"> //43
 	| <BOOL: "bool"> //44
 	| <NUMERO : ("-")?(["1"-"9"])+ | "0">  //45
-	| <IDENTIFICADOR : ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])*>  //46
-	| <DECIMAL : <NUMERO>["."](["0"-"9"])+ > //47
-	| <CADENA : <COMILLAS>(~[])*<COMILLAS>> //48
-	| <CARACTER : "'"(~[])"'" >//49
-	| <DOSPUNTOS : ":"> //50
-	| <BOOLEANO : "true" | "false"> //51
+	| <BOOLEANO : "true" | "false"> //46
+	| <IDENTIFICADOR : ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])*>  //47
+	| <DECIMAL : <NUMERO>["."](["0"-"9"])+ > //48
+	| <CADENA : <COMILLAS>(~[])*<COMILLAS>> //49
+	| <CARACTER : "'"(~[])"'" >//50
+	| <DOSPUNTOS : ":"> //51
 }
 
 SKIP : 
@@ -105,73 +106,77 @@ SKIP :
   	|  <"/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
 }
 
+//*********declaracion de la estructura general del programa
 void Programa() :
 {}
 {
 	<PROGRAMA><IDENTIFICADOR><LLAVEIZQ>Cuerpo()<LLAVEDER><EOF>	
 }
+//*********Declaracion del cuerpo del programa
 void Cuerpo():
 {
   TokenAsignaciones.SetTables();	
   }
 {
-(VariablesGlobales())* Principal() (ImplementacionFunciones())* 
+ ( VariablesGlobales())* Principal() (ImplementacionFunciones())* 
 } 
-
+//*********declaracion de las variables en general
 void VariablesGlobales():
-{}
 {
- var()( vector()|declare()|funcion() )	  
+Token tok, fun; }
+{
+(tok=var()( vector() {TokenAsignaciones.InsertarSimbolo(tok, tok.kind);}|declare() {TokenAsignaciones.InsertarSimbolo(tok, tok.kind);}| fun=funcion() {TokenAsignaciones.InsertarFuncion(tok, tok.kind,fun);} )) 
 }
-
+//*********declaracion de vectores
 void vector():
 {}
 {
 <CORIZQ> <NUMERO> <CORDER> <PUNTOYCOMA>
 }
-
+//*********declaracion de varibles globales
 void declare():
 {}
 {
 (<COMA><IDENTIFICADOR>)* <PUNTOYCOMA>
 }
 
-//declaracion de las Funciones
-void funcion():
-{}
-{
- <PARIZQ>parametros() <PARDER>< PUNTOYCOMA >   	
+//*********Declaracion Funciones
+Token funcion():
+{  Token varia=null;}
+{ < PARIZQ > varia=parametros() < PARDER > < PUNTOYCOMA > 
+ {  return varia; } 	
 }
-void var():
-{
-  int td;
-  Token var;	
+
+//*********Parte inicial de las declaraciones
+Token var():
+{int td;
+  Token var,ide;	
 }
-{    (TiposDatos())
+{   (TiposDatos())
 	{
-	  td = token.kind;
-	}
-	<DOSPUNTOS> var = <IDENTIFICADOR> 
-	{		
-		TokenAsignaciones.InsertarSimbolo(var, td);
-	}  
+	  td = token.kind;	}
+	<DOSPUNTOS> var=<IDENTIFICADOR>
+	{	  ide= new Token (td,var.image);	}	 
+{ return ide;}
 }
 
-void parametros():
-{}
-{ (var()| < COMA > var())*}
+//*********Parametros de las funciones
+Token parametros():
+{Token par=null;}
+{ (par=var()
+| < COMA > par=var())*
+{ return par;}
+}
 
-//definicin de main
+//*********definicin de main
 void Principal():
-{
-	
-}
+{}
 {
 	<MAIN>
 	<LLAVEIZQ> Sentencias() <LLAVEDER> 	
 }
 
-
+//*********tipos de datos de los identificadores, vectores y funciones
 void TiposDatos():
 {}
 {
@@ -182,21 +187,32 @@ void TiposDatos():
 	|<BOOL>
 }
 
-// Implementacion de las funciones
+// *********Implementacion de las funciones
 void ImplementacionFunciones():
-{}
+{ }
 {
   cabecera() cuerpoFuncion()}
 
+// *********Definicion de la cabecera de las funciones
 void cabecera():
-{}
+{ int td;
+  Token var;
+  Token par;}
 {
-  TiposDatos()  < DOSPUNTOS > < IDENTIFICADOR > < PARIZQ > parametros() < PARDER >  }
+  (TiposDatos(){  td = token.kind;}
+  < DOSPUNTOS > var=<IDENTIFICADOR>
+	{
+	  var= new Token (td,var.image);
+	}
+	< PARIZQ > par=parametros() < PARDER >)
+	 {	   TokenAsignaciones.VerificarFuncion(var,td,par);	 }	 }
 
+// *********Cuerpo de las funciones
 void cuerpoFuncion():
-{}
 {
-  < LLAVEIZQ > Sentencias()  < LLAVEDER > }
+  Token nom;}
+{
+  < LLAVEIZQ > Sentencias() < RETURN > nom =< IDENTIFICADOR >   < LLAVEDER > }
 void VariablesLocales():
 {
 	int td;
@@ -226,6 +242,7 @@ void VariablesLocales():
 	(VS())
 }
 
+// *********Definicion de las variables de asignacion
 void VariablesAsignacion(Token v1):
 {
 	Token v2;
@@ -239,7 +256,6 @@ void VariablesAsignacion(Token v1):
 	  {  
 		v2 = token;
 		res = TokenAsignaciones.checkAsing(v1, v2);
-		
 		if(res != " ")
 		{
 			System.out.println(res);
@@ -265,6 +281,7 @@ void VS():
 	LOOKAHEAD(3)VariablesLocales() | Sentencias()
 }
 
+// *********definicion de las sentencias que se pueden realizar en las funciones
 void Sentencias():
 {}
 {
@@ -278,7 +295,7 @@ void Sentencias():
 	)*
 }
 
-//Sentencia IF
+// *********Definicion de Sentencia IF
 void SentenciaIf():
 {}
 {
@@ -295,13 +312,14 @@ void A():
 {
 	  Comparaciones() ([(<AND>|<OR>)] Comparaciones())*
 }
-//Fin sentencia if
 
+// *********Definicion de Comparaciones posibles
 void Comparaciones():
 {}
 {
 	Valor()Operadores()Valor()
 }
+
 void Valor():
 {}
 {
@@ -324,6 +342,8 @@ void Operadores():
 	  | <MAYOR> 
 	  | <MENOR> 
 }
+
+// *********Definicion de operadores aritmeticos
 int OpAritmetico():
 {}
 {
@@ -338,7 +358,7 @@ int OpAritmetico():
 
 
 
-//Sentencia DO
+// *********Definicion de Sentencia DO
 void SentenciaDo():
 {}
 {
@@ -346,14 +366,14 @@ void SentenciaDo():
 		
 }
 
-//Sentencia WHILE
+// *********Definicion de WHILE
 void SentenciaWhile():
 {}
 {
 	<WHILE> <PARIZQ> Comparaciones() <PARDER> <DO> <LLAVEIZQ> Sentencias() <LLAVEDER>
 }
 
-//Sentencia ASIGNACION
+// *********Definicion de  Sentencia ASIGNACION
 void SentenciaAsignacion():
 {
 	Token v1;
@@ -389,6 +409,8 @@ void SentenciaAsignacion():
   
   //SentenciaAsignacion ya trae <PUNTOYCOMA> en el metodo Sentencias()
 }
+
+// *********Definicion de tipos de asignaciones
 void TiposAsignaciones():
 {}
 {
@@ -397,17 +419,18 @@ void TiposAsignaciones():
 	| <DECIMAL> 
 	| <CADENA> 
 	| <CARACTER>
+	| < BOOLEANO > 
 }
 
 
-//Sentencia WRITE
+// *********Definicion de Sentencia WRITE
 void SentenciaWrite():
 {}
 {
 	<WRITE> <PARIZQ> (Expresion()(<MAS><CADENA>)*|<CADENA>(<MAS>Expresion())*)* <PARDER> <PUNTOYCOMA> 
 }
 
-//Sentencia READ
+// *********Definicion de Sentencia READ
 void SentenciaRead():
 {}
 {

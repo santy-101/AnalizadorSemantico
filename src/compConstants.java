@@ -99,17 +99,17 @@ public interface compConstants {
   /** RegularExpression Id. */
   int NUMERO = 45;
   /** RegularExpression Id. */
-  int IDENTIFICADOR = 46;
+  int BOOLEANO = 46;
   /** RegularExpression Id. */
-  int DECIMAL = 47;
+  int IDENTIFICADOR = 47;
   /** RegularExpression Id. */
-  int CADENA = 48;
+  int DECIMAL = 48;
   /** RegularExpression Id. */
-  int CARACTER = 49;
+  int CADENA = 49;
   /** RegularExpression Id. */
-  int DOSPUNTOS = 50;
+  int CARACTER = 50;
   /** RegularExpression Id. */
-  int BOOLEANO = 51;
+  int DOSPUNTOS = 51;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -162,12 +162,12 @@ public interface compConstants {
     "\"string\"",
     "\"bool\"",
     "<NUMERO>",
+    "<BOOLEANO>",
     "<IDENTIFICADOR>",
     "<DECIMAL>",
     "<CADENA>",
     "<CARACTER>",
     "\":\"",
-    "<BOOLEANO>",
     "\" \"",
     "\"\\n\"",
     "\"\\r\"",

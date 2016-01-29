@@ -1,24 +1,27 @@
 Programa test
 {
 //Declaracion de variables globales
-int : j;
-int : k;    
+int : j;  
 int : og[2];  
-char: suma();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+char:suma(int:x);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 	public static void Main() 
 	{
 	bool:x;
 	bool:x;
-	y=x;
-	k=suma;
+	int:k;
+	y=suma(k);
+	k=true;
 	int:j;
 	
 	}
-char : suma (int:x, float:y)
+char : suma (int:x)
 {
 int: res;
-res = x+y;
+res = x+y+5+6+6;
+
+return res
 }
+
 	 
 	
 	

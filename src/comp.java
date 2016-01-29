@@ -22,8 +22,10 @@ class comp implements compConstants {
                 }
 
                 TokenAsignaciones.visualizarTablas();
+                TokenAsignaciones.visualizarTablasFunciones();
         }
 
+//*********declaracion de la estructura general del programa
   static final public void Programa() throws ParseException {
     jj_consume_token(PROGRAMA);
     jj_consume_token(IDENTIFICADOR);
@@ -33,6 +35,7 @@ class comp implements compConstants {
     jj_consume_token(0);
   }
 
+//*********Declaracion del cuerpo del programa
   static final public void Cuerpo() throws ParseException {
   TokenAsignaciones.SetTables();
     label_1:
@@ -70,18 +73,23 @@ class comp implements compConstants {
     }
   }
 
+//*********declaracion de las variables en general
   static final public void VariablesGlobales() throws ParseException {
-    var();
+Token tok, fun;
+    tok = var();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case CORIZQ:
       vector();
+                      TokenAsignaciones.InsertarSimbolo(tok, tok.kind);
       break;
     case PUNTOYCOMA:
     case COMA:
       declare();
+                                                                                    TokenAsignaciones.InsertarSimbolo(tok, tok.kind);
       break;
     case PARIZQ:
-      funcion();
+      fun = funcion();
+                                                                                                                                                       TokenAsignaciones.InsertarFuncion(tok, tok.kind,fun);
       break;
     default:
       jj_la1[2] = jj_gen;
@@ -90,6 +98,7 @@ class comp implements compConstants {
     }
   }
 
+//*********declaracion de vectores
   static final public void vector() throws ParseException {
     jj_consume_token(CORIZQ);
     jj_consume_token(NUMERO);
@@ -97,6 +106,7 @@ class comp implements compConstants {
     jj_consume_token(PUNTOYCOMA);
   }
 
+//*********declaracion de varibles globales
   static final public void declare() throws ParseException {
     label_3:
     while (true) {
@@ -114,25 +124,33 @@ class comp implements compConstants {
     jj_consume_token(PUNTOYCOMA);
   }
 
-//declaracion de las Funciones
-  static final public void funcion() throws ParseException {
+//*********Declaracion Funciones
+  static final public Token funcion() throws ParseException {
+   Token varia=null;
     jj_consume_token(PARIZQ);
-    parametros();
+    varia = parametros();
     jj_consume_token(PARDER);
     jj_consume_token(PUNTOYCOMA);
+    {if (true) return varia;}
+    throw new Error("Missing return statement in function");
   }
 
-  static final public void var() throws ParseException {
-  int td;
-  Token var;
+//*********Parte inicial de las declaraciones
+  static final public Token var() throws ParseException {
+ int td;
+  Token var,ide;
     TiposDatos();
           td = token.kind;
     jj_consume_token(DOSPUNTOS);
     var = jj_consume_token(IDENTIFICADOR);
-                TokenAsignaciones.InsertarSimbolo(var, td);
+          ide= new Token (td,var.image);
+  {if (true) return ide;}
+    throw new Error("Missing return statement in function");
   }
 
-  static final public void parametros() throws ParseException {
+//*********Parametros de las funciones
+  static final public Token parametros() throws ParseException {
+ Token par=null;
     label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -154,11 +172,11 @@ class comp implements compConstants {
       case CHAR:
       case STRING:
       case BOOL:
-        var();
+        par = var();
         break;
       case COMA:
         jj_consume_token(COMA);
-        var();
+        par = var();
         break;
       default:
         jj_la1[5] = jj_gen;
@@ -166,9 +184,11 @@ class comp implements compConstants {
         throw new ParseException();
       }
     }
+  {if (true) return par;}
+    throw new Error("Missing return statement in function");
   }
 
-//definicin de main
+//*********definicin de main
   static final public void Principal() throws ParseException {
     jj_consume_token(MAIN);
     jj_consume_token(LLAVEIZQ);
@@ -176,6 +196,7 @@ class comp implements compConstants {
     jj_consume_token(LLAVEDER);
   }
 
+//*********tipos de datos de los identificadores, vectores y funciones
   static final public void TiposDatos() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case INT:
@@ -200,24 +221,35 @@ class comp implements compConstants {
     }
   }
 
-// Implementacion de las funciones
+// *********Implementacion de las funciones
   static final public void ImplementacionFunciones() throws ParseException {
     cabecera();
     cuerpoFuncion();
   }
 
+// *********Definicion de la cabecera de las funciones
   static final public void cabecera() throws ParseException {
+  int td;
+  Token var;
+  Token par;
     TiposDatos();
+                  td = token.kind;
     jj_consume_token(DOSPUNTOS);
-    jj_consume_token(IDENTIFICADOR);
+    var = jj_consume_token(IDENTIFICADOR);
+          var= new Token (td,var.image);
     jj_consume_token(PARIZQ);
-    parametros();
+    par = parametros();
     jj_consume_token(PARDER);
+           TokenAsignaciones.VerificarFuncion(var,td,par);
   }
 
+// *********Cuerpo de las funciones
   static final public void cuerpoFuncion() throws ParseException {
+  Token nom;
     jj_consume_token(LLAVEIZQ);
     Sentencias();
+    jj_consume_token(RETURN);
+    nom = jj_consume_token(IDENTIFICADOR);
     jj_consume_token(LLAVEDER);
   }
 
@@ -263,6 +295,7 @@ class comp implements compConstants {
     VS();
   }
 
+// *********Definicion de las variables de asignacion
   static final public void VariablesAsignacion(Token v1) throws ParseException {
         Token v2;
         Token v3;
@@ -286,6 +319,7 @@ class comp implements compConstants {
       case POR:
       case DIVIDE:
       case NUMERO:
+      case BOOLEANO:
       case IDENTIFICADOR:
       case DECIMAL:
       case CADENA:
@@ -316,6 +350,7 @@ class comp implements compConstants {
     }
   }
 
+// *********definicion de las sentencias que se pueden realizar en las funciones
   static final public void Sentencias() throws ParseException {
     label_7:
     while (true) {
@@ -375,7 +410,7 @@ class comp implements compConstants {
     }
   }
 
-//Sentencia IF
+// *********Definicion de Sentencia IF
   static final public void SentenciaIf() throws ParseException {
     jj_consume_token(IF);
     jj_consume_token(PARIZQ);
@@ -445,7 +480,7 @@ class comp implements compConstants {
     }
   }
 
-//Fin sentencia if
+// *********Definicion de Comparaciones posibles
   static final public void Comparaciones() throws ParseException {
     Valor();
     Operadores();
@@ -559,6 +594,7 @@ class comp implements compConstants {
     }
   }
 
+// *********Definicion de operadores aritmeticos
   static final public int OpAritmetico() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MAS:
@@ -585,7 +621,7 @@ class comp implements compConstants {
     throw new Error("Missing return statement in function");
   }
 
-//Sentencia DO
+// *********Definicion de Sentencia DO
   static final public void SentenciaDo() throws ParseException {
     jj_consume_token(DO);
     jj_consume_token(LLAVEIZQ);
@@ -598,7 +634,7 @@ class comp implements compConstants {
     jj_consume_token(PUNTOYCOMA);
   }
 
-//Sentencia WHILE
+// *********Definicion de WHILE
   static final public void SentenciaWhile() throws ParseException {
     jj_consume_token(WHILE);
     jj_consume_token(PARIZQ);
@@ -610,7 +646,7 @@ class comp implements compConstants {
     jj_consume_token(LLAVEDER);
   }
 
-//Sentencia ASIGNACION
+// *********Definicion de  Sentencia ASIGNACION
   static final public void SentenciaAsignacion() throws ParseException {
         Token v1;
         Token v2;
@@ -648,6 +684,7 @@ class comp implements compConstants {
     }
   }
 
+// *********Definicion de tipos de asignaciones
   static final public void TiposAsignaciones() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFICADOR:
@@ -665,6 +702,9 @@ class comp implements compConstants {
     case CARACTER:
       jj_consume_token(CARACTER);
       break;
+    case BOOLEANO:
+      jj_consume_token(BOOLEANO);
+      break;
     default:
       jj_la1[26] = jj_gen;
       jj_consume_token(-1);
@@ -672,7 +712,7 @@ class comp implements compConstants {
     }
   }
 
-//Sentencia WRITE
+// *********Definicion de Sentencia WRITE
   static final public void SentenciaWrite() throws ParseException {
     jj_consume_token(WRITE);
     jj_consume_token(PARIZQ);
@@ -732,7 +772,7 @@ class comp implements compConstants {
     jj_consume_token(PUNTOYCOMA);
   }
 
-//Sentencia READ
+// *********Definicion de Sentencia READ
   static final public void SentenciaRead() throws ParseException {
     jj_consume_token(READ);
     jj_consume_token(PARIZQ);
@@ -779,33 +819,6 @@ class comp implements compConstants {
     return false;
   }
 
-  static private boolean jj_3R_15() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_scan_token(IGUAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_23() {
-    return false;
-  }
-
-  static private boolean jj_3R_14() {
-    if (jj_3R_18()) return true;
-    if (jj_scan_token(DOSPUNTOS)) return true;
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_22() {
-    if (jj_scan_token(DIVIDE)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_21() {
-    if (jj_scan_token(POR)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_18() {
     Token xsp;
     xsp = jj_scanpos;
@@ -825,8 +838,23 @@ class comp implements compConstants {
     return false;
   }
 
-  static private boolean jj_3_1() {
-    if (jj_3R_14()) return true;
+  static private boolean jj_3R_15() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_scan_token(IGUAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_23() {
+    return false;
+  }
+
+  static private boolean jj_3R_22() {
+    if (jj_scan_token(DIVIDE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_21() {
+    if (jj_scan_token(POR)) return true;
     return false;
   }
 
@@ -837,16 +865,6 @@ class comp implements compConstants {
 
   static private boolean jj_3R_19() {
     if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_4() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(45)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(46)) return true;
-    }
     return false;
   }
 
@@ -869,31 +887,56 @@ class comp implements compConstants {
     return false;
   }
 
-  static private boolean jj_3_3() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(46)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(45)) return true;
-    }
+  static private boolean jj_3R_14() {
+    if (jj_3R_18()) return true;
+    if (jj_scan_token(DOSPUNTOS)) return true;
+    if (jj_scan_token(IDENTIFICADOR)) return true;
     return false;
   }
 
   static private boolean jj_3R_17() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(46)) {
+    if (jj_scan_token(47)) {
     jj_scanpos = xsp;
     if (jj_scan_token(45)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(47)) {
-    jj_scanpos = xsp;
     if (jj_scan_token(48)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(49)) return true;
+    if (jj_scan_token(49)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(50)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(46)) return true;
     }
     }
     }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_4() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(45)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(47)) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3_3() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(47)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(45)) return true;
     }
     return false;
   }
@@ -927,7 +970,7 @@ class comp implements compConstants {
       jj_la1_0 = new int[] {0x0,0x0,0xd100000,0x8000000,0x8000000,0x8000000,0x0,0x2,0x8000000,0x2,0x3c,0x69000,0x9000,0x60000,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3c,0x0,0x0,0x4,0x4,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x1f00,0x1f00,0x0,0x0,0x1f00,0x1f00,0x1f00,0x0,0x0,0x0,0x3e000,0x5f00,0x1f00,0x0,0x0,0x60c0,0xc0,0xc0,0x6000,0x6000,0x6000,0x6000,0x6000,0x6000,0x3f,0x0,0x3e000,0x16000,0x0,0x0,0x16000,};
+      jj_la1_1 = new int[] {0x1f00,0x1f00,0x0,0x0,0x1f00,0x1f00,0x1f00,0x0,0x0,0x0,0x7e000,0x9f00,0x1f00,0x0,0x0,0xa0c0,0xc0,0xc0,0xa000,0xa000,0xa000,0xa000,0xa000,0xa000,0x3f,0x0,0x7e000,0x2a000,0x0,0x0,0x2a000,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[5];
   static private boolean jj_rescan = false;
