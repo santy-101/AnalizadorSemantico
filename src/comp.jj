@@ -6,12 +6,10 @@ class comp
 	{
 		try
 		{
-		    File fe = new File("code.txt");
+		    File fe = new File("codigo.txt");
 			BufferedReader entrada;
-
 			entrada = new BufferedReader(new FileReader(fe));
-		
-     		comp analizador = new comp(entrada) ;
+			comp analizador = new comp(entrada) ;
 			analizador.Programa();
 			System.out.println("\tAnalizador ha terminado.");
 				
@@ -91,7 +89,7 @@ TOKEN:
 	| <BOOL: "bool"> //44
 	| <NUMERO : ("-")?(["1"-"9"])+ | "0">  //45
 	| <BOOLEANO : "true" | "false"> //46
-	| <IDENTIFICADOR : ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])*>  //47
+	| <IDENTIFICADOR : ["a"-"z"](["a"-"z"])*>  //47
 	| <DECIMAL : <NUMERO>["."](["0"-"9"])+ > //48
 	| <CADENA : <COMILLAS>(~[])*<COMILLAS>> //49
 	| <CARACTER : "'"(~[])"'" >//50
@@ -123,41 +121,53 @@ void Cuerpo():
 //*********declaracion de las variables en general
 void VariablesGlobales():
 {
-Token tok, fun; }
+  int td;
+Token var; }
 {
-(tok=var()( vector() {TokenAsignaciones.InsertarSimbolo(tok, tok.kind);}|declare() {TokenAsignaciones.InsertarSimbolo(tok, tok.kind);}| fun=funcion() {TokenAsignaciones.InsertarFuncion(tok, tok.kind,fun);} )) 
+(TiposDatos()	{td = token.kind;})<DOSPUNTOS> var=<IDENTIFICADOR> { var= new Token (td, var.image);}
+	( vector(var)
+	|declare(var) 
+	|funcion(var))
 }
+
 //*********declaracion de vectores
-void vector():
+void vector(Token var):
 {}
 {
+  {TokenAsignaciones.insertarSimbolo(var,var);}
 <CORIZQ> <NUMERO> <CORDER> <PUNTOYCOMA>
 }
+
 //*********declaracion de varibles globales
-void declare():
-{}
+void declare(Token var):
+{Token par;}
 {
-(<COMA><IDENTIFICADOR>)* <PUNTOYCOMA>
+ {TokenAsignaciones.insertarSimbolo(var,var);}
+(<COMA>par=< IDENTIFICADOR >{TokenAsignaciones.insertarSimbolo(par,var);})* <PUNTOYCOMA>
 }
 
 //*********Declaracion Funciones
-Token funcion():
-{  Token varia=null;}
-{ < PARIZQ > varia=parametros() < PARDER > < PUNTOYCOMA > 
- {  return varia; } 	
+void funcion(Token var):
+{int td;
+ Token par;}
+{ < PARIZQ >{ TokenAsignaciones.insertarFuncion(var);}
+((TiposDatos(){td = token.kind;})
+	< DOSPUNTOS > par=< IDENTIFICADOR >{ par= new Token (td, par.image); TokenAsignaciones.insertarParametros(var,par); }
+|< COMA > (TiposDatos(){td = token.kind;}) < DOSPUNTOS >par=< IDENTIFICADOR >{ par= new Token (td, par.image); TokenAsignaciones.insertarParametros(var,par); } )*< PARDER > < PUNTOYCOMA > 
+ 	
 }
 
 //*********Parte inicial de las declaraciones
 Token var():
 {int td;
-  Token var,ide;	
+  Token var;	
 }
 {   (TiposDatos())
 	{
 	  td = token.kind;	}
 	<DOSPUNTOS> var=<IDENTIFICADOR>
-	{	  ide= new Token (td,var.image);	}	 
-{ return ide;}
+	{	  var= new Token (td,var.image);	}	 
+{ return var;}
 }
 
 //*********Parametros de las funciones
@@ -189,30 +199,23 @@ void TiposDatos():
 
 // *********Implementacion de las funciones
 void ImplementacionFunciones():
-{ }
+{int t1,t2;
+Token var,par; }
 {
-  cabecera() cuerpoFuncion()}
-
-// *********Definicion de la cabecera de las funciones
-void cabecera():
-{ int td;
-  Token var;
-  Token par;}
-{
-  (TiposDatos(){  td = token.kind;}
-  < DOSPUNTOS > var=<IDENTIFICADOR>
-	{
-	  var= new Token (td,var.image);
-	}
-	< PARIZQ > par=parametros() < PARDER >)
-	 {	   TokenAsignaciones.VerificarFuncion(var,td,par);	 }	 }
+(TiposDatos(){t1 = token.kind;}
+   <DOSPUNTOS> var=<IDENTIFICADOR> { var= new Token (t1, var.image);}< PARIZQ >
+{ TokenAsignaciones.verificarFuncion1(var);})
+((TiposDatos(){t2 = token.kind;})< DOSPUNTOS > par=< IDENTIFICADOR >{ par= new Token (t2, par.image); TokenAsignaciones.verificarFuncion2(var,par); }
+|< COMA > (TiposDatos(){t2 = token.kind;})< DOSPUNTOS >par=< IDENTIFICADOR >
+{ par= new Token (t2, par.image); TokenAsignaciones.verificarFuncion2(var,par); } )* < PARDER > 
+ cuerpoFuncion(var)}
 
 // *********Cuerpo de las funciones
-void cuerpoFuncion():
+void cuerpoFuncion(Token var):
 {
   Token nom;}
 {
-  < LLAVEIZQ > Sentencias() < RETURN > nom =< IDENTIFICADOR >   < LLAVEDER > }
+  < LLAVEIZQ > Sentencias() < RETURN > nom =< IDENTIFICADOR > < PUNTOYCOMA >  < LLAVEDER > }
 void VariablesLocales():
 {
 	int td;
@@ -226,14 +229,14 @@ void VariablesLocales():
 	}
 	<DOSPUNTOS> var = <IDENTIFICADOR> 
 	{		
-		TokenAsignaciones.InsertarSimbolo(var, td);
+		//TokenAsignaciones.InsertarSimbolo(var, td);
 	} 
 	[VariablesAsignacion(var)]
 	(
 		<COMA>
 		var = <IDENTIFICADOR> 
 		{		
-			TokenAsignaciones.InsertarSimbolo(var, td);
+			//TokenAsignaciones.InsertarSimbolo(var, td);
 		} 
 		[VariablesAsignacion(var)]
 	)*	

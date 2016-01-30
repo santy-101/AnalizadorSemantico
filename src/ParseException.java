@@ -107,7 +107,7 @@ public class ParseException extends Exception {
       if (i != 0) retval += " ";
       if (tok.kind == 0) {
         retval += tokenImage[0];
-        //break;
+       //break;
       }
       retval += " " + tokenImage[tok.kind];
       retval += " \"";

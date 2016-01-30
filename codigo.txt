@@ -1,0 +1,34 @@
+Programa test
+{
+int : j;  
+int : og[2];  
+char:suma(int:x,float:y);
+int:resta();
+int : j;  
+char:suma();
+int:resta();  
+int : og[9];                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+	public static void Main() 
+	{
+	bool:x;
+	int:k;
+	k=true;
+	int:j;
+	
+	}
+
+char : suma (int:x)
+{
+int: res;
+res = x+y+5+6+6;
+
+return res;
+}
+
+	 
+	
+	
+	
+	
+		
+}

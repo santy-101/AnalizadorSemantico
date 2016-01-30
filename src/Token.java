@@ -19,7 +19,6 @@ public class Token implements java.io.Serializable {
    * stored in the file ...Constants.java.
    */
   public int kind;
-
   /** The line number of the first character of this Token. */
   public int beginLine;
   /** The column number of the first character of this Token. */

@@ -5,12 +5,10 @@ class comp implements compConstants {
         {
                 try
                 {
-                    File fe = new File("code.txt");
+                    File fe = new File("codigo.txt");
                         BufferedReader entrada;
-
                         entrada = new BufferedReader(new FileReader(fe));
-
-                comp analizador = new comp(entrada) ;
+                        comp analizador = new comp(entrada) ;
                         analizador.Programa();
                         System.out.println("\u005ctAnalizador ha terminado.");
 
@@ -75,21 +73,23 @@ class comp implements compConstants {
 
 //*********declaracion de las variables en general
   static final public void VariablesGlobales() throws ParseException {
-Token tok, fun;
-    tok = var();
+  int td;
+Token var;
+    TiposDatos();
+                 td = token.kind;
+    jj_consume_token(DOSPUNTOS);
+    var = jj_consume_token(IDENTIFICADOR);
+                                                                     var= new Token (td, var.image);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case CORIZQ:
-      vector();
-                      TokenAsignaciones.InsertarSimbolo(tok, tok.kind);
+      vector(var);
       break;
     case PUNTOYCOMA:
     case COMA:
-      declare();
-                                                                                    TokenAsignaciones.InsertarSimbolo(tok, tok.kind);
+      declare(var);
       break;
     case PARIZQ:
-      fun = funcion();
-                                                                                                                                                       TokenAsignaciones.InsertarFuncion(tok, tok.kind,fun);
+      funcion(var);
       break;
     default:
       jj_la1[2] = jj_gen;
@@ -99,7 +99,8 @@ Token tok, fun;
   }
 
 //*********declaracion de vectores
-  static final public void vector() throws ParseException {
+  static final public void vector(Token var) throws ParseException {
+   TokenAsignaciones.insertarSimbolo(var,var);
     jj_consume_token(CORIZQ);
     jj_consume_token(NUMERO);
     jj_consume_token(CORDER);
@@ -107,7 +108,9 @@ Token tok, fun;
   }
 
 //*********declaracion de varibles globales
-  static final public void declare() throws ParseException {
+  static final public void declare(Token var) throws ParseException {
+ Token par;
+  TokenAsignaciones.insertarSimbolo(var,var);
     label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -119,38 +122,18 @@ Token tok, fun;
         break label_3;
       }
       jj_consume_token(COMA);
-      jj_consume_token(IDENTIFICADOR);
+      par = jj_consume_token(IDENTIFICADOR);
+                             TokenAsignaciones.insertarSimbolo(par,var);
     }
     jj_consume_token(PUNTOYCOMA);
   }
 
 //*********Declaracion Funciones
-  static final public Token funcion() throws ParseException {
-   Token varia=null;
-    jj_consume_token(PARIZQ);
-    varia = parametros();
-    jj_consume_token(PARDER);
-    jj_consume_token(PUNTOYCOMA);
-    {if (true) return varia;}
-    throw new Error("Missing return statement in function");
-  }
-
-//*********Parte inicial de las declaraciones
-  static final public Token var() throws ParseException {
+  static final public void funcion(Token var) throws ParseException {
  int td;
-  Token var,ide;
-    TiposDatos();
-          td = token.kind;
-    jj_consume_token(DOSPUNTOS);
-    var = jj_consume_token(IDENTIFICADOR);
-          ide= new Token (td,var.image);
-  {if (true) return ide;}
-    throw new Error("Missing return statement in function");
-  }
-
-//*********Parametros de las funciones
-  static final public Token parametros() throws ParseException {
- Token par=null;
+ Token par;
+    jj_consume_token(PARIZQ);
+  TokenAsignaciones.insertarFuncion(var);
     label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -172,6 +155,67 @@ Token tok, fun;
       case CHAR:
       case STRING:
       case BOOL:
+        TiposDatos();
+               td = token.kind;
+        jj_consume_token(DOSPUNTOS);
+        par = jj_consume_token(IDENTIFICADOR);
+                                             par= new Token (td, par.image); TokenAsignaciones.insertarParametros(var,par);
+        break;
+      case COMA:
+        jj_consume_token(COMA);
+        TiposDatos();
+                        td = token.kind;
+        jj_consume_token(DOSPUNTOS);
+        par = jj_consume_token(IDENTIFICADOR);
+                                                                               par= new Token (td, par.image); TokenAsignaciones.insertarParametros(var,par);
+        break;
+      default:
+        jj_la1[5] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+    jj_consume_token(PARDER);
+    jj_consume_token(PUNTOYCOMA);
+  }
+
+//*********Parte inicial de las declaraciones
+  static final public Token var() throws ParseException {
+ int td;
+  Token var;
+    TiposDatos();
+          td = token.kind;
+    jj_consume_token(DOSPUNTOS);
+    var = jj_consume_token(IDENTIFICADOR);
+          var= new Token (td,var.image);
+  {if (true) return var;}
+    throw new Error("Missing return statement in function");
+  }
+
+//*********Parametros de las funciones
+  static final public Token parametros() throws ParseException {
+ Token par=null;
+    label_5:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case COMA:
+      case INT:
+      case FLOAT:
+      case CHAR:
+      case STRING:
+      case BOOL:
+        ;
+        break;
+      default:
+        jj_la1[6] = jj_gen;
+        break label_5;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case INT:
+      case FLOAT:
+      case CHAR:
+      case STRING:
+      case BOOL:
         par = var();
         break;
       case COMA:
@@ -179,7 +223,7 @@ Token tok, fun;
         par = var();
         break;
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[7] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -215,7 +259,7 @@ Token tok, fun;
       jj_consume_token(BOOL);
       break;
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[8] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -223,33 +267,68 @@ Token tok, fun;
 
 // *********Implementacion de las funciones
   static final public void ImplementacionFunciones() throws ParseException {
-    cabecera();
-    cuerpoFuncion();
-  }
-
-// *********Definicion de la cabecera de las funciones
-  static final public void cabecera() throws ParseException {
-  int td;
-  Token var;
-  Token par;
+ int t1,t2;
+Token var,par;
     TiposDatos();
-                  td = token.kind;
+              t1 = token.kind;
     jj_consume_token(DOSPUNTOS);
     var = jj_consume_token(IDENTIFICADOR);
-          var= new Token (td,var.image);
+                                     var= new Token (t1, var.image);
     jj_consume_token(PARIZQ);
-    par = parametros();
+  TokenAsignaciones.verificarFuncion1(var);
+    label_6:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case COMA:
+      case INT:
+      case FLOAT:
+      case CHAR:
+      case STRING:
+      case BOOL:
+        ;
+        break;
+      default:
+        jj_la1[9] = jj_gen;
+        break label_6;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case INT:
+      case FLOAT:
+      case CHAR:
+      case STRING:
+      case BOOL:
+        TiposDatos();
+               t2 = token.kind;
+        jj_consume_token(DOSPUNTOS);
+        par = jj_consume_token(IDENTIFICADOR);
+                                             par= new Token (t2, par.image); TokenAsignaciones.verificarFuncion2(var,par);
+        break;
+      case COMA:
+        jj_consume_token(COMA);
+        TiposDatos();
+                        t2 = token.kind;
+        jj_consume_token(DOSPUNTOS);
+        par = jj_consume_token(IDENTIFICADOR);
+  par= new Token (t2, par.image); TokenAsignaciones.verificarFuncion2(var,par);
+        break;
+      default:
+        jj_la1[10] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
     jj_consume_token(PARDER);
-           TokenAsignaciones.VerificarFuncion(var,td,par);
+    cuerpoFuncion(var);
   }
 
 // *********Cuerpo de las funciones
-  static final public void cuerpoFuncion() throws ParseException {
+  static final public void cuerpoFuncion(Token var) throws ParseException {
   Token nom;
     jj_consume_token(LLAVEIZQ);
     Sentencias();
     jj_consume_token(RETURN);
     nom = jj_consume_token(IDENTIFICADOR);
+    jj_consume_token(PUNTOYCOMA);
     jj_consume_token(LLAVEDER);
   }
 
@@ -260,34 +339,34 @@ Token tok, fun;
           td = token.kind;
     jj_consume_token(DOSPUNTOS);
     var = jj_consume_token(IDENTIFICADOR);
-                TokenAsignaciones.InsertarSimbolo(var, td);
+
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IGUAL:
       VariablesAsignacion(var);
       break;
     default:
-      jj_la1[7] = jj_gen;
+      jj_la1[11] = jj_gen;
       ;
     }
-    label_5:
+    label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMA:
         ;
         break;
       default:
-        jj_la1[8] = jj_gen;
-        break label_5;
+        jj_la1[12] = jj_gen;
+        break label_7;
       }
       jj_consume_token(COMA);
       var = jj_consume_token(IDENTIFICADOR);
-                        TokenAsignaciones.InsertarSimbolo(var, td);
+
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IGUAL:
         VariablesAsignacion(var);
         break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[13] = jj_gen;
         ;
       }
     }
@@ -305,13 +384,12 @@ Token tok, fun;
     TiposAsignaciones();
                 v2 = token;
                 res = TokenAsignaciones.checkAsing(v1, v2);
-
                 if(res != " ")
                 {
                         System.out.println(res);
                         imp = true;
                 }
-    label_6:
+    label_8:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case MAS:
@@ -327,8 +405,8 @@ Token tok, fun;
         ;
         break;
       default:
-        jj_la1[10] = jj_gen;
-        break label_6;
+        jj_la1[14] = jj_gen;
+        break label_8;
       }
       OpAritmetico();
       TiposAsignaciones();
@@ -352,7 +430,7 @@ Token tok, fun;
 
 // *********definicion de las sentencias que se pueden realizar en las funciones
   static final public void Sentencias() throws ParseException {
-    label_7:
+    label_9:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IF:
@@ -368,8 +446,8 @@ Token tok, fun;
         ;
         break;
       default:
-        jj_la1[11] = jj_gen;
-        break label_7;
+        jj_la1[15] = jj_gen;
+        break label_9;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case INT:
@@ -386,7 +464,7 @@ Token tok, fun;
         SentenciaDo();
         break;
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[16] = jj_gen;
         if (jj_2_2(2)) {
           SentenciaAsignacion();
           jj_consume_token(PUNTOYCOMA);
@@ -401,7 +479,7 @@ Token tok, fun;
             jj_consume_token(PUNTOYCOMA);
             break;
           default:
-            jj_la1[13] = jj_gen;
+            jj_la1[17] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -420,15 +498,15 @@ Token tok, fun;
     jj_consume_token(LLAVEIZQ);
     Sentencias();
     jj_consume_token(LLAVEDER);
-    label_8:
+    label_10:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case ELSE:
         ;
         break;
       default:
-        jj_la1[14] = jj_gen;
-        break label_8;
+        jj_la1[18] = jj_gen;
+        break label_10;
       }
       Sino();
     }
@@ -443,7 +521,7 @@ Token tok, fun;
 
   static final public void A() throws ParseException {
     Comparaciones();
-    label_9:
+    label_11:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case OR:
@@ -453,8 +531,8 @@ Token tok, fun;
         ;
         break;
       default:
-        jj_la1[15] = jj_gen;
-        break label_9;
+        jj_la1[19] = jj_gen;
+        break label_11;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case OR:
@@ -467,13 +545,13 @@ Token tok, fun;
           jj_consume_token(OR);
           break;
         default:
-          jj_la1[16] = jj_gen;
+          jj_la1[20] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
         break;
       default:
-        jj_la1[17] = jj_gen;
+        jj_la1[21] = jj_gen;
         ;
       }
       Comparaciones();
@@ -497,7 +575,7 @@ Token tok, fun;
         jj_consume_token(NUMERO);
         break;
       default:
-        jj_la1[18] = jj_gen;
+        jj_la1[22] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -508,7 +586,7 @@ Token tok, fun;
         Expresion();
         break;
       default:
-        jj_la1[19] = jj_gen;
+        jj_la1[23] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -525,7 +603,7 @@ Token tok, fun;
         jj_consume_token(IDENTIFICADOR);
         break;
       default:
-        jj_la1[20] = jj_gen;
+        jj_la1[24] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -541,7 +619,7 @@ Token tok, fun;
           jj_consume_token(NUMERO);
           break;
         default:
-          jj_la1[21] = jj_gen;
+          jj_la1[25] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -554,13 +632,13 @@ Token tok, fun;
           jj_consume_token(NUMERO);
           break;
         default:
-          jj_la1[22] = jj_gen;
+          jj_la1[26] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
         break;
       default:
-        jj_la1[23] = jj_gen;
+        jj_la1[27] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -588,7 +666,7 @@ Token tok, fun;
       jj_consume_token(MENOR);
       break;
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[28] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -614,7 +692,7 @@ Token tok, fun;
                      {if (true) return 1;}
       break;
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[29] = jj_gen;
             {if (true) return 0;}
          {if (true) return 0;}
     }
@@ -665,12 +743,12 @@ Token tok, fun;
                 System.out.println(res);
                 imp = true;
         }
-    label_10:
+    label_12:
     while (true) {
       if (jj_2_5(2)) {
         ;
       } else {
-        break label_10;
+        break label_12;
       }
       OpAritmetico();
       TiposAsignaciones();
@@ -706,7 +784,7 @@ Token tok, fun;
       jj_consume_token(BOOLEANO);
       break;
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[30] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -716,7 +794,7 @@ Token tok, fun;
   static final public void SentenciaWrite() throws ParseException {
     jj_consume_token(WRITE);
     jj_consume_token(PARIZQ);
-    label_11:
+    label_13:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case NUMERO:
@@ -725,22 +803,22 @@ Token tok, fun;
         ;
         break;
       default:
-        jj_la1[27] = jj_gen;
-        break label_11;
+        jj_la1[31] = jj_gen;
+        break label_13;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case NUMERO:
       case IDENTIFICADOR:
         Expresion();
-        label_12:
+        label_14:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case MAS:
             ;
             break;
           default:
-            jj_la1[28] = jj_gen;
-            break label_12;
+            jj_la1[32] = jj_gen;
+            break label_14;
           }
           jj_consume_token(MAS);
           jj_consume_token(CADENA);
@@ -748,22 +826,22 @@ Token tok, fun;
         break;
       case CADENA:
         jj_consume_token(CADENA);
-        label_13:
+        label_15:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case MAS:
             ;
             break;
           default:
-            jj_la1[29] = jj_gen;
-            break label_13;
+            jj_la1[33] = jj_gen;
+            break label_15;
           }
           jj_consume_token(MAS);
           Expresion();
         }
         break;
       default:
-        jj_la1[30] = jj_gen;
+        jj_la1[34] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -815,71 +893,59 @@ Token tok, fun;
   }
 
   static private boolean jj_3_2() {
-    if (jj_3R_15()) return true;
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    if (jj_scan_token(IGUAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_25() {
+    return false;
+  }
+
+  static private boolean jj_3R_24() {
+    if (jj_scan_token(DIVIDE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_23() {
+    if (jj_scan_token(POR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_22() {
+    if (jj_scan_token(MENOS)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_21() {
+    if (jj_scan_token(MAS)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_16() {
+    if (jj_3R_20()) return true;
+    if (jj_scan_token(DOSPUNTOS)) return true;
+    if (jj_scan_token(IDENTIFICADOR)) return true;
     return false;
   }
 
   static private boolean jj_3R_18() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(40)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(41)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(43)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(42)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(44)) return true;
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_15() {
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    if (jj_scan_token(IGUAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_23() {
-    return false;
-  }
-
-  static private boolean jj_3R_22() {
-    if (jj_scan_token(DIVIDE)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_21() {
-    if (jj_scan_token(POR)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_20() {
-    if (jj_scan_token(MENOS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_19() {
-    if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_16() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_19()) {
-    jj_scanpos = xsp;
-    if (jj_3R_20()) {
-    jj_scanpos = xsp;
     if (jj_3R_21()) {
     jj_scanpos = xsp;
     if (jj_3R_22()) {
     jj_scanpos = xsp;
-    if (jj_3R_23()) return true;
+    if (jj_3R_23()) {
+    jj_scanpos = xsp;
+    if (jj_3R_24()) {
+    jj_scanpos = xsp;
+    if (jj_3R_25()) return true;
     }
     }
     }
@@ -887,14 +953,7 @@ Token tok, fun;
     return false;
   }
 
-  static private boolean jj_3R_14() {
-    if (jj_3R_18()) return true;
-    if (jj_scan_token(DOSPUNTOS)) return true;
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_17() {
+  static private boolean jj_3R_19() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(47)) {
@@ -917,7 +976,7 @@ Token tok, fun;
   }
 
   static private boolean jj_3_1() {
-    if (jj_3R_14()) return true;
+    if (jj_3R_16()) return true;
     return false;
   }
 
@@ -941,9 +1000,28 @@ Token tok, fun;
     return false;
   }
 
+  static private boolean jj_3R_20() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(40)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(41)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(43)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(42)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(44)) return true;
+    }
+    }
+    }
+    }
+    return false;
+  }
+
   static private boolean jj_3_5() {
-    if (jj_3R_16()) return true;
-    if (jj_3R_17()) return true;
+    if (jj_3R_18()) return true;
+    if (jj_3R_19()) return true;
     return false;
   }
 
@@ -959,7 +1037,7 @@ Token tok, fun;
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[31];
+  static final private int[] jj_la1 = new int[35];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -967,10 +1045,10 @@ Token tok, fun;
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0xd100000,0x8000000,0x8000000,0x8000000,0x0,0x2,0x8000000,0x2,0x3c,0x69000,0x9000,0x60000,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3c,0x0,0x0,0x4,0x4,0x0,};
+      jj_la1_0 = new int[] {0x0,0x0,0xd100000,0x8000000,0x8000000,0x8000000,0x8000000,0x8000000,0x0,0x8000000,0x8000000,0x2,0x8000000,0x2,0x3c,0x69000,0x9000,0x60000,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3c,0x0,0x0,0x4,0x4,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x1f00,0x1f00,0x0,0x0,0x1f00,0x1f00,0x1f00,0x0,0x0,0x0,0x7e000,0x9f00,0x1f00,0x0,0x0,0xa0c0,0xc0,0xc0,0xa000,0xa000,0xa000,0xa000,0xa000,0xa000,0x3f,0x0,0x7e000,0x2a000,0x0,0x0,0x2a000,};
+      jj_la1_1 = new int[] {0x1f00,0x1f00,0x0,0x0,0x1f00,0x1f00,0x1f00,0x1f00,0x1f00,0x1f00,0x1f00,0x0,0x0,0x0,0x7e000,0x9f00,0x1f00,0x0,0x0,0xa0c0,0xc0,0xc0,0xa000,0xa000,0xa000,0xa000,0xa000,0xa000,0x3f,0x0,0x7e000,0x2a000,0x0,0x0,0x2a000,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[5];
   static private boolean jj_rescan = false;
@@ -994,7 +1072,7 @@ Token tok, fun;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1009,7 +1087,7 @@ Token tok, fun;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1027,7 +1105,7 @@ Token tok, fun;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1038,7 +1116,7 @@ Token tok, fun;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1055,7 +1133,7 @@ Token tok, fun;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1065,7 +1143,7 @@ Token tok, fun;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1182,7 +1260,7 @@ Token tok, fun;
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 31; i++) {
+    for (int i = 0; i < 35; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
